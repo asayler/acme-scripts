@@ -26,7 +26,13 @@ fi
 echo "Requesting new cert for ${SITE}"
 python3 "${ACME_TINY}" --account-key "${ACCOUNT_KEY}" \
         --csr "${CSR}" --acme-dir "${CHALLENGE}" \
-        > "${CRT}"  || { echo 'acme_tiny failed' ; exit 1; }
+        > "${CRT}"
+if [[ $? != 0 ]]
+then
+    echo 'acme_tiny failed, restoring backup'
+    mv "${CRT}.old" "${CRT}"
+    exit 1
+fi
 
 # Generate Cert Chain
 wget -O - "${INTER_URL}" > "${INTER}"  || { echo 'wget failed' ; exit 1; }
