@@ -4,19 +4,16 @@
 # April 2016
 # Uses https://github.com/diafygi/acme-tiny
 
-SITE="$1"
-CHALLENGE="$2"
+ACME_CONF="$1"
+SITE="$2"
 
-LE_BASE="/srv/@le"
-ACME_TINY="${LE_BASE}/src/acme-tiny/acme_tiny.py"
-ACCOUNT_KEY="${LE_BASE}/account.key"
-INTER="${LE_BASE}/letsencrypt.crt"
-INTER_URL="https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem"
-CSR_BASE="${LE_BASE}/files/csr"
-CSR="${CSR_BASE}/${SITE}.csr"
-CRT_BASE="${LE_BASE}/files/certs"
-CRT="${CRT_BASE}/${SITE}.crt"
-CHAIN="${CRT}.chain"
+# Read Site Vars
+if [[ ! -e "${ACME_CONF}" ]]
+then
+    echo "Could not find ${ACME_CONF}"
+    exit 1
+fi
+source "${ACME_CONF}" || { echo 'source failed' ; exit 1; }
 
 # Backup Existing Cert
 if [[ -e "${CRT}" ]]
